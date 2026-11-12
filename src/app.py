@@ -1,6 +1,8 @@
+import chromadb
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+from sentence_transformers import SentenceTransformer
 
 # Configuracao da pagina (titulo na aba do navegador)
 st.set_page_config(page_title="Proposicoes Legislativas 2026", layout="wide")
@@ -56,3 +58,32 @@ fig_dia = px.bar(por_dia, x="quantidade", y="dia_formatado", orientation="h",
 fig_dia.update_yaxes(title="Dia")
 fig_dia.update_xaxes(title="Quantidade")
 st.plotly_chart(fig_dia, use_container_width=True)
+
+
+# --- Secao de busca semantica ---
+st.markdown("---")
+st.header("Busca semantica nas ementas")
+st.markdown("Digite um tema e veja os projetos de lei mais relacionados (por significado, nao so por palavra exata).")
+
+@st.cache_resource
+def carregar_modelo_e_colecao():
+    modelo = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+    cliente = chromadb.PersistentClient(path="data/chroma_db")
+    colecao = cliente.get_collection(name="proposicoes")
+    return modelo, colecao
+
+modelo, colecao = carregar_modelo_e_colecao()
+
+pergunta_usuario = st.text_input("O que voce quer buscar?", placeholder="Ex: projetos sobre proteção de dados pessoais")
+
+if pergunta_usuario:
+    embedding_pergunta = modelo.encode([pergunta_usuario])
+    resultados = colecao.query(query_embeddings=embedding_pergunta.tolist(), n_results=5)
+
+    st.subheader(f"Resultados mais relevantes para: \"{pergunta_usuario}\"")
+    for i in range(len(resultados["ids"][0])):
+        ementa = resultados["documents"][0][i]
+        distancia = resultados["distances"][0][i]
+        with st.container():
+            st.markdown(f"**{i+1}.** {ementa}")
+            st.caption(f"Distância semântica: {distancia:.2f} (quanto menor, mais relacionado)")

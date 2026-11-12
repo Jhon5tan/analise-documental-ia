@@ -4,6 +4,20 @@ Projeto em Python para coletar, analisar e pesquisar semanticamente projetos de 
 
 > **Recorte dos dados incluídos:** o arquivo `data/proposicoes.csv` contém 5.403 projetos de lei (`PL`), com datas de apresentação entre 2 de janeiro e 11 de novembro de 2026. Esse conjunto representa a coleta realizada até 11/11/2026; não deve ser interpretado como o total definitivo de proposições de todo o ano.
 
+## Capturas de tela
+
+### Visão geral do dashboard
+![Dashboard geral com total de PLs e gráfico por mês](docs/screenshots/dashboard-geral.png)
+
+### Projetos de lei por mês
+![Gráfico de PLs apresentados por mês](docs/screenshots/pls-por-mes.png)
+
+### Top 10 dias com mais PLs apresentados
+![Gráfico horizontal com os dez dias de maior volume](docs/screenshots/top-dias.png)
+
+### Busca semântica nas ementas
+![Campo de busca semântica integrado ao dashboard](docs/screenshots/busca-semantica.png)
+
 ## Funcionalidades
 
 - **Coleta de dados:** consulta a API de Dados Abertos da Câmara dos Deputados, filtrando proposições do tipo `PL` por intervalos de datas e percorrendo as páginas disponibilizadas pela API.
