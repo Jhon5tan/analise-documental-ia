@@ -12,7 +12,7 @@ modelo = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
 
 # Cria (ou abre, se ja existir) um banco de dados Chroma salvo em disco,
 # na pasta "chroma_db" dentro do projeto
-cliente_chroma = chromadb.PersistentClient(path="chroma_db")
+cliente_chroma = chromadb.PersistentClient(path="data/chroma_db")
 
 # Cria (ou abre) uma "colecao" dentro do Chroma para armazenar os embeddings das ementas
 colecao = cliente_chroma.get_or_create_collection(name="proposicoes")
@@ -27,7 +27,7 @@ embeddings = modelo.encode(ementas, show_progress_bar=True)
 # o texto original, e o embedding correspondente
 ids = df["id"].astype(str).tolist()
 
-colecao.add(
+colecao.upsert(
     ids=ids,
     documents=ementas,
     embeddings=embeddings.tolist(),
